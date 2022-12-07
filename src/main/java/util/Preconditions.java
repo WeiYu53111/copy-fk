@@ -11,6 +11,12 @@ import javax.annotation.Nullable;
  */
 public final class Preconditions {
 
+    public static void checkArgument(boolean condition, @Nullable Object errorMessage) {
+        if (!condition) {
+            throw new IllegalArgumentException(String.valueOf(errorMessage));
+        }
+    }
+
     public static <T> T checkNotNull(@Nullable T reference) {
         if (reference == null) {
             throw new NullPointerException();

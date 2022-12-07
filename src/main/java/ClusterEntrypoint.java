@@ -1,9 +1,12 @@
 import configuration.Configuration;
 import configuration.IllegalConfigurationException;
+import configuration.JobManagerOptions;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rpc.RpcService;
 import rpc.RpcSystem;
+import rpc.RpcUtils;
 
 import java.io.*;
 import java.util.Properties;
@@ -33,6 +36,8 @@ public class ClusterEntrypoint {
 
 
     private RpcSystem rpcSystem;
+
+    private RpcService commonRpcService;
 
 
     public ClusterEntrypoint(Configuration configuration) {
@@ -226,8 +231,6 @@ public class ClusterEntrypoint {
          *  2、权限校验,  UserGroupInformation , 这个还没怎么研究过 Spark中也有这个玩意
          *
          */
-
-
         //1、初始化 service 对象, 源代码中 有两个入参,  此处省略了  PluginManager
         initializeServices(configuration);
 
@@ -246,14 +249,25 @@ public class ClusterEntrypoint {
          */
         //TODO 补充 RpcSystem 存在的意义
 
-
         // 通过java的SPI机制返回RpcSystem的实现类
         rpcSystem = RpcSystem.load(configuration);
 
-
+        // 创建rpc服务,通过该服务启动以及连接远程rpcServer
+        commonRpcService =
+                RpcUtils.createRemoteRpcService(
+                        rpcSystem,
+                        configuration,
+                        // 这里JobManagerOptions.ADDRESS 对象是通过Builder模式构建的
+                        configuration.getString(JobManagerOptions.ADDRESS),
+                        getRPCPortRange(configuration),
+                        configuration.getString(JobManagerOptions.BIND_HOST),
+                        configuration.getOptional(JobManagerOptions.RPC_BIND_PORT));
 
 
     }
 
+    protected String getRPCPortRange(Configuration configuration) {
+        return String.valueOf(configuration.getInteger(JobManagerOptions.PORT));
+    }
 
 }
