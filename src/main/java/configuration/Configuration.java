@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static configuration.ConfigurationUtils.canBePrefixMap;
+
 /**
  * @Description
  * @Author weiyu
@@ -129,5 +131,17 @@ public class Configuration {
             return Optional.of(valueFromPrefixMap);
         }
     }
+
+    /**
+     * Returns the value associated with the given config option as an integer.
+     *
+     * @param configOption The configuration option
+     * @return the (default) value associated with the given config option
+     */
+    //TODO 缺少 注解 @PublicEvolving
+    public int getInteger(ConfigOption<Integer> configOption) {
+        return getOptional(configOption).orElseGet(configOption::defaultValue);
+    }
+
 
 }

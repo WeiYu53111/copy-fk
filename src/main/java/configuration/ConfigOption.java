@@ -30,6 +30,8 @@ public class ConfigOption<T> {
     /** The list of deprecated keys, in the order to be checked. */
     private final FallbackKey[] fallbackKeys;
 
+    private static final FallbackKey[] EMPTY = new FallbackKey[0];
+
     /**
      * Type of the value that this ConfigOption describes.
      *
@@ -84,6 +86,24 @@ public class ConfigOption<T> {
      */
     public String key() {
         return key;
+    }
+
+
+    Class<?> getClazz() {
+        return clazz;
+    }
+
+    boolean isList() {
+        return isList;
+    }
+
+    /**
+     * Checks whether this option has fallback keys.
+     *
+     * @return True if the option has fallback keys, false if not.
+     */
+    public boolean hasFallbackKeys() {
+        return fallbackKeys != EMPTY;
     }
 
 }
