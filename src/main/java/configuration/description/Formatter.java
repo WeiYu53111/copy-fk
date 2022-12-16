@@ -18,4 +18,10 @@ public abstract class Formatter {
         return finalizeFormatting();
     }
 
+    private String finalizeFormatting() {
+        String result = state.toString();
+        state.setLength(0);
+        return result.replaceAll("%%", "%");
+    }
+
 }

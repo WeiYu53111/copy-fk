@@ -2,6 +2,9 @@ package configuration;
 
 import configuration.description.Description;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import static util.Preconditions.checkNotNull;
 
 
@@ -46,7 +49,7 @@ public class ConfigOption<T> {
     private final boolean isList;
 
 
-    ConfigOption(
+    /*ConfigOption(
             String key,
             Class<?> clazz,
             Description description,
@@ -55,6 +58,32 @@ public class ConfigOption<T> {
         this.key = checkNotNull(key);
         this.description = description;
         this.defaultValue = defaultValue;
+        this.clazz = checkNotNull(clazz);
+        this.isList = isList;
+    }*/
+
+    /**
+     * Creates a new config option with fallback keys.
+     *
+     * @param key The current key for that config option
+     * @param clazz describes type of the ConfigOption, see description of the clazz field
+     * @param description Description for that option
+     * @param defaultValue The default value for this option
+     * @param isList tells if the ConfigOption describes a list option, see description of the clazz
+     *     field
+     * @param fallbackKeys The list of fallback keys, in the order to be checked
+     */
+    ConfigOption(
+            String key,
+            Class<?> clazz,
+            Description description,
+            T defaultValue,
+            boolean isList,
+            FallbackKey... fallbackKeys) {
+        this.key = checkNotNull(key);
+        this.description = description;
+        this.defaultValue = defaultValue;
+        this.fallbackKeys = fallbackKeys == null || fallbackKeys.length == 0 ? EMPTY : fallbackKeys;
         this.clazz = checkNotNull(clazz);
         this.isList = isList;
     }
@@ -104,6 +133,15 @@ public class ConfigOption<T> {
      */
     public boolean hasFallbackKeys() {
         return fallbackKeys != EMPTY;
+    }
+
+    /**
+     * Gets the fallback keys, in the order to be checked.
+     *
+     * @return The option's fallback keys.
+     */
+    public Iterable<FallbackKey> fallbackKeys() {
+        return (fallbackKeys == EMPTY) ? Collections.emptyList() : Arrays.asList(fallbackKeys);
     }
 
 }

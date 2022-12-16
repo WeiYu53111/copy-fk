@@ -5,6 +5,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static configuration.ConfigurationUtils.canBePrefixMap;
+import static configuration.ConfigurationUtils.convertToPropertiesPrefixed;
 
 /**
  * @Description
@@ -85,7 +86,7 @@ public class Configuration {
                 final Optional<T> valueFromFallbackKey =
                         applier.apply(fallbackKey.getKey(), canBePrefixMap);
                 if (valueFromFallbackKey.isPresent()) {
-                    loggingFallback(fallbackKey, option);
+                    //loggingFallback(fallbackKey, option);
                     return valueFromFallbackKey;
                 }
             }
