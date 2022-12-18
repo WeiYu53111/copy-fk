@@ -136,8 +136,9 @@ public class ClusterEntrypoint {
 
         /**
          *  读取 flink-conf.yaml 配置文件
+         *
           */
-
+        // TODO 此处有省略了不少代码,对于目前来说没有必要因此省略了
         Configuration configuration = loadYAMLResource(yamlConfigFile);
 
         if (dynamicProperties != null) {
@@ -248,6 +249,8 @@ public class ClusterEntrypoint {
          * 1、初始化rpc
          */
         //TODO 补充 RpcSystem 存在的意义
+        //TODO 原flink代码中,在创建rpcSystem以及commonRpcService对象时候会加锁, 目前没发现哪个地方有并发因此省略
+
 
         // 通过java的SPI机制返回RpcSystem的实现类
         rpcSystem = RpcSystem.load(configuration);

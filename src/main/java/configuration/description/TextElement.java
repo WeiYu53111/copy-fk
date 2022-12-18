@@ -1,6 +1,7 @@
 package configuration.description;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -14,10 +15,16 @@ public class TextElement implements BlockElement, InlineElement{
 
     private final String format;
     private final List<InlineElement> elements;
+    private final EnumSet<TextStyle> textStyles = EnumSet.noneOf(TextStyle.class);
 
     @Override
     public void format(Formatter formatter) {
         formatter.format(this);
+    }
+
+
+    public String getFormat() {
+        return format;
     }
 
     public static TextElement text(String format, InlineElement... elements) {
@@ -27,6 +34,20 @@ public class TextElement implements BlockElement, InlineElement{
     private TextElement(String format, List<InlineElement> elements) {
         this.format = format;
         this.elements = elements;
+    }
+
+    public List<InlineElement> getElements() {
+        return elements;
+    }
+
+
+    /** Styles that can be applied to {@link TextElement} e.g. code, bold etc. */
+    public enum TextStyle {
+        CODE
+    }
+
+    public EnumSet<TextStyle> getStyles() {
+        return textStyles;
     }
 
 }
