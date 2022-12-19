@@ -10,6 +10,8 @@ import rpc.RpcUtils;
 
 import java.io.*;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @Description
@@ -35,9 +37,12 @@ public class ClusterEntrypoint {
     static final String FLINK_CONF_FILENAME = "flink-conf.yaml";
 
 
+    // TODO 为什么成员变量大多都用了注解  @GuardedBy("lock")
     private RpcSystem rpcSystem;
 
     private RpcService commonRpcService;
+
+    private ExecutorService ioExecutor;
 
 
     public ClusterEntrypoint(Configuration configuration) {
@@ -265,6 +270,18 @@ public class ClusterEntrypoint {
                         getRPCPortRange(configuration),
                         configuration.getString(JobManagerOptions.BIND_HOST),
                         configuration.getOptional(JobManagerOptions.RPC_BIND_PORT));
+
+
+        // TODO 省略 JMXServer的代码,应该是flink UI上 JVM信息收集的相关工作等后续再回来补
+
+
+
+        ioExecutor =
+                Executors.newFixedThreadPool(
+                        ClusterEntrypointUtils.getPoolSize(configuration),
+                        new ExecutorThreadFactory("cluster-io"));
+
+
 
 
     }
