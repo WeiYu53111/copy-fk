@@ -1,4 +1,4 @@
-package flink.flink_rpc.flink.rpc.exception;
+package flink.flink_rpc.flink_rpc_core.rpc.exception;
 
 /**
  * @Description

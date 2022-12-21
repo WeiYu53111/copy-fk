@@ -1,4 +1,4 @@
-package flink.flink_rpc.flink.rpc;
+package flink.flink_rpc.flink_rpc_core.rpc;
 
 import java.util.concurrent.CompletableFuture;
 

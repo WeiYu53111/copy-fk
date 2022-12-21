@@ -1,4 +1,4 @@
-package flink.flink_rpc.flink.rpc;
+package flink.flink_rpc.flink_rpc_core.rpc;
 
 /**
  * @Description
@@ -8,6 +8,8 @@ package flink.flink_rpc.flink.rpc;
  * @Date 12/20/2022
  */
 
+
+import flink.flink_core.configuration.Configuration;
 
 import java.net.UnknownHostException;
 

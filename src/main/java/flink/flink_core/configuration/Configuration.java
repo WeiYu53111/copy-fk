@@ -113,7 +113,12 @@ public class Configuration {
         }
     }
 
-
+    public String getValue(ConfigOption<?> configOption) {
+        return Optional.ofNullable(
+                getRawValueFromOption(configOption).orElseGet(configOption::defaultValue))
+                .map(String::valueOf)
+                .orElse(null);
+    }
     private Optional<Object> getRawValue(String key, boolean canBePrefixMap) {
         if (key == null) {
             throw new NullPointerException("Key must not be null.");

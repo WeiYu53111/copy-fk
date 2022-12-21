@@ -4,6 +4,7 @@ import flink.flink_core.configuration.description.Description;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import static flink.flink_core.util.Preconditions.checkNotNull;
 
@@ -143,5 +144,32 @@ public class ConfigOption<T> {
     public Iterable<FallbackKey> fallbackKeys() {
         return (fallbackKeys == EMPTY) ? Collections.emptyList() : Arrays.asList(fallbackKeys);
     }
+
+
+    /**
+     * Creates a new config option, using this option's key and default value, and adding the given
+     * deprecated keys.
+     *
+     * <p>When obtaining a value from the configuration via {@link
+     * Configuration#getValue(ConfigOption)}, the deprecated keys will be checked in the order
+     * provided to this method. The first key for which a value is found will be used - that value
+     * will be returned.
+     *
+     * @param deprecatedKeys The deprecated keys, in the order in which they should be checked.
+     * @return A new config options, with the given deprecated keys.
+     */
+    public ConfigOption<T> withDeprecatedKeys(String... deprecatedKeys) {
+        final Stream<FallbackKey> newDeprecatedKeys =
+                Arrays.stream(deprecatedKeys).map(FallbackKey::createDeprecatedKey);
+        final Stream<FallbackKey> currentAlternativeKeys = Arrays.stream(this.fallbackKeys);
+
+        // put deprecated keys last so that they are de-prioritized
+        final FallbackKey[] mergedAlternativeKeys =
+                Stream.concat(currentAlternativeKeys, newDeprecatedKeys)
+                        .toArray(FallbackKey[]::new);
+        return new ConfigOption<>(
+                key, clazz, description, defaultValue, isList, mergedAlternativeKeys);
+    }
+
 
 }

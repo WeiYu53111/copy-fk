@@ -1,4 +1,4 @@
-package flink.flink_runtime.flink.runtime.highavailability;
+package flink.flink_runtime.runtime.highavailability;
 
 /**
  * @Description

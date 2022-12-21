@@ -1,4 +1,4 @@
-package flink.flink_runtime.flink.runtime.util;
+package flink.flink_runtime.runtime.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

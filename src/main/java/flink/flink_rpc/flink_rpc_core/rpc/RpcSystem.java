@@ -1,8 +1,8 @@
-package flink.flink_rpc.flink.rpc;
+package flink.flink_rpc.flink_rpc_core.rpc;
 
 
 import flink.flink_core.configuration.Configuration;
-import flink.flink_rpc.flink.rpc.exception.RpcLoaderException;
+import flink.flink_rpc.flink_rpc_core.rpc.exception.RpcLoaderException;
 import flink.flink_core.util.ExceptionUtils;
 
 import java.util.Iterator;

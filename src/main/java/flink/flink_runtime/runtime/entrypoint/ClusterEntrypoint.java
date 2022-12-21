@@ -1,16 +1,15 @@
-package flink.flink_runtime.flink.runtime.entrypoint;
+package flink.flink_runtime.runtime.entrypoint;
 
 import flink.flink_core.configuration.Configuration;
 import flink.flink_core.configuration.IllegalConfigurationException;
 import flink.flink_core.configuration.JobManagerOptions;
 import flink.flink_core.util.concurrent.ExecutorThreadFactory;
-import flink.flink_runtime.flink.runtime.highavailability.HighAvailabilityServices;
+import flink.flink_rpc.flink_rpc_core.rpc.*;
+import flink.flink_runtime.runtime.highavailability.HighAvailabilityServices;
+import flink.flink_runtime.runtime.highavailability.HighAvailabilityServicesUtils;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import flink.flink_rpc.flink.rpc.RpcService;
-import flink.flink_rpc.flink.rpc.RpcSystem;
-import flink.flink_rpc.flink.rpc.RpcUtils;
 
 import java.io.*;
 import java.util.Properties;
