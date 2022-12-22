@@ -172,4 +172,32 @@ public class ConfigOption<T> {
     }
 
 
+
+    /**
+     * Creates a new config option, using this option's key and default value, and adding the given
+     * fallback keys.
+     *
+     * <p>When obtaining a value from the configuration via {@link
+     * Configuration#getValue(ConfigOption)}, the fallback keys will be checked in the order
+     * provided to this method. The first key for which a value is found will be used - that value
+     * will be returned.
+     *
+     * @param fallbackKeys The fallback keys, in the order in which they should be checked.
+     * @return A new config options, with the given fallback keys.
+     */
+    public ConfigOption<T> withFallbackKeys(String... fallbackKeys) {
+        final Stream<FallbackKey> newFallbackKeys =
+                Arrays.stream(fallbackKeys).map(FallbackKey::createFallbackKey);
+        final Stream<FallbackKey> currentAlternativeKeys = Arrays.stream(this.fallbackKeys);
+
+        // put fallback keys first so that they are prioritized
+        final FallbackKey[] mergedAlternativeKeys =
+                Stream.concat(newFallbackKeys, currentAlternativeKeys).toArray(FallbackKey[]::new);
+        return new ConfigOption<>(
+                key, clazz, description, defaultValue, isList, mergedAlternativeKeys);
+    }
+
+
+
+
 }

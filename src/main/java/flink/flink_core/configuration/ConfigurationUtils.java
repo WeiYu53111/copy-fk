@@ -2,6 +2,8 @@ package flink.flink_core.configuration;
 
 import flink.flink_core.util.TimeUtils;
 
+import javax.annotation.Nonnull;
+import java.io.File;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +19,9 @@ import java.util.stream.Collectors;
  * @Date 12/13/2022
  */
 public class ConfigurationUtils {
+
+    private static final String[] EMPTY = new String[0];
+
 
     // --------------------------------------------------------------------------------------------
     //  Prefix map handling
@@ -304,5 +309,24 @@ public class ConfigurationUtils {
         return string;
     }
 
+
+    /**
+     * Extracts the task manager directories for temporary files as defined by {@link
+     * org.apache.flink.configuration.CoreOptions#TMP_DIRS}.
+     *
+     * @param configuration configuration object
+     * @return array of configured directories (in order)
+     */
+    @Nonnull
+    public static String[] parseTempDirectories(Configuration configuration) {
+        return splitPaths(configuration.getString(CoreOptions.TMP_DIRS));
+    }
+
+    @Nonnull
+    public static String[] splitPaths(@Nonnull String separatedPaths) {
+        return separatedPaths.length() > 0
+                ? separatedPaths.split(",|" + File.pathSeparator)
+                : EMPTY;
+    }
 
 }

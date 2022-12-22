@@ -9,6 +9,7 @@ package flink.flink_runtime.runtime.jobmanager;
  */
 
 
+import flink.flink_core.configuration.ConfigConstants;
 import flink.flink_core.configuration.Configuration;
 import flink.flink_core.configuration.HighAvailabilityOptions;
 

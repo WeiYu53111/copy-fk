@@ -4,6 +4,7 @@ import flink.flink_core.api.java.tuple.Tuple2;
 import flink.flink_core.configuration.Configuration;
 import flink.flink_core.configuration.JobManagerOptions;
 import flink.flink_core.configuration.RestOptions;
+import flink.flink_core.configuration.SecurityOptions;
 import flink.flink_rpc.flink_rpc_core.rpc.AddressResolution;
 import flink.flink_rpc.flink_rpc_core.rpc.FatalErrorHandler;
 import flink.flink_rpc.flink_rpc_core.rpc.RpcServiceUtils;
@@ -17,6 +18,8 @@ import javax.naming.ConfigurationException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.Executor;
+
+import static flink.flink_core.util.Preconditions.checkNotNull;
 
 /**
  * @Description

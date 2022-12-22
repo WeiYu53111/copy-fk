@@ -1,6 +1,7 @@
 package flink.flink_core.configuration.description;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -49,5 +50,31 @@ public class TextElement implements BlockElement, InlineElement{
     public EnumSet<TextStyle> getStyles() {
         return textStyles;
     }
+
+
+
+    /**
+     * Creates a simple block of text.
+     *
+     * @param text a simple block of text
+     * @return block of text
+     */
+    public static TextElement text(String text) {
+        return new TextElement(text, Collections.emptyList());
+    }
+
+
+    /**
+     * Creates a block of text formatted as code.
+     *
+     * @param text a block of text that will be formatted as code
+     * @return block of text formatted as code
+     */
+    public static TextElement code(String text) {
+        TextElement element = text(text);
+        element.textStyles.add(TextStyle.CODE);
+        return element;
+    }
+
 
 }

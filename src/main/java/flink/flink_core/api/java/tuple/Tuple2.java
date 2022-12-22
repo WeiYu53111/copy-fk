@@ -96,4 +96,16 @@ public class Tuple2<T0, T1> extends Tuple {
         result = 31 * result + (f1 != null ? f1.hashCode() : 0);
         return result;
     }
+
+
+    /**
+     * Creates a new tuple and assigns the given values to the tuple's fields. This is more
+     * convenient than using the constructor, because the compiler can infer the generic type
+     * arguments implicitly. For example: {@code Tuple3.of(n, x, s)} instead of {@code new
+     * Tuple3<Integer, Double, String>(n, x, s)}
+     */
+    public static <T0, T1> Tuple2<T0, T1> of(T0 f0, T1 f1) {
+        return new Tuple2<>(f0, f1);
+    }
+
 }

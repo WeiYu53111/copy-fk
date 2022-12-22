@@ -53,6 +53,9 @@ public class ConfigOptions {
     }
 
 
+
+
+
     /**
      * Builder for {@link ConfigOption} with a defined atomic type.
      *
@@ -127,5 +130,9 @@ public class ConfigOptions {
         }
 
 
+        /** Defines that the value of the option should be of {@link Boolean} type. */
+        public TypedConfigOptionBuilder<Boolean> booleanType() {
+            return new TypedConfigOptionBuilder<>(key, Boolean.class);
+        }
     }
 }

@@ -5,6 +5,7 @@ import flink.flink_core.configuration.IllegalConfigurationException;
 import flink.flink_core.configuration.JobManagerOptions;
 import flink.flink_core.util.concurrent.ExecutorThreadFactory;
 import flink.flink_rpc.flink_rpc_core.rpc.*;
+import flink.flink_runtime.runtime.blob.BlobServer;
 import flink.flink_runtime.runtime.highavailability.HighAvailabilityServices;
 import flink.flink_runtime.runtime.highavailability.HighAvailabilityServicesUtils;
 import org.apache.commons.cli.*;
@@ -27,7 +28,7 @@ import java.util.concurrent.Executors;
 
 
 
-public class ClusterEntrypoint {
+public class ClusterEntrypoint implements FatalErrorHandler{
 
     private Configuration configuration;
 
@@ -49,6 +50,8 @@ public class ClusterEntrypoint {
     private ExecutorService ioExecutor;
 
     private HighAvailabilityServices haServices;
+
+    private BlobServer blobServer;
 
 
     public ClusterEntrypoint(Configuration configuration) {
@@ -297,6 +300,9 @@ public class ClusterEntrypoint {
         haServices = createHaServices(configuration, ioExecutor, rpcSystem);
 
 
+        //TODO 负责处理一些文件的上传工作,例如jar包、日志? 后续补充BlobServer的说明
+        blobServer = new BlobServer(configuration, haServices.createBlobStore());
+
 
 
     }
@@ -317,4 +323,10 @@ public class ClusterEntrypoint {
     }
 
 
+    @Override
+    public void onFatalError(Throwable exception) {
+        //ClusterEntryPointExceptionUtils.tryEnrichClusterEntryPointError(exception);
+        LOG.error("Fatal error occurred in the cluster entrypoint.", exception);
+        //FlinkSecurityManager.forceProcessExit(RUNTIME_FAILURE_RETURN_CODE);
+    }
 }

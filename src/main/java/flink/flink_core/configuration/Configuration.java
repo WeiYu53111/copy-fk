@@ -138,6 +138,31 @@ public class Configuration {
         }
     }
 
+
+
+    /**
+     * Returns the value associated with the given config option as a boolean.
+     *
+     * @param configOption The configuration option
+     * @return the (default) value associated with the given config option
+     */
+    public boolean getBoolean(ConfigOption<Boolean> configOption) {
+        return getOptional(configOption).orElseGet(configOption::defaultValue);
+    }
+
+
+    /**
+     * Returns the value associated with the given config option as a boolean. If no value is mapped
+     * under any key of the option, it returns the specified default instead of the option's default
+     * value.
+     *
+     * @param configOption The configuration option
+     * @param overrideDefault The value to return if no value was mapper for any key of the option
+     * @return the configured value associated with the given config option, or the overrideDefault
+     */
+    public boolean getBoolean(ConfigOption<Boolean> configOption, boolean overrideDefault) {
+        return getOptional(configOption).orElse(overrideDefault);
+    }
     /**
      * Returns the value associated with the given config option as an integer.
      *
@@ -185,5 +210,17 @@ public class Configuration {
     public void setInteger(ConfigOption<Integer> key, int value) {
         setValueInternal(key.key(), value);
     }
+
+
+    /**
+     * Returns the value associated with the given config option as a long integer.
+     *
+     * @param configOption The configuration option
+     * @return the (default) value associated with the given config option
+     */
+    public long getLong(ConfigOption<Long> configOption) {
+        return getOptional(configOption).orElseGet(configOption::defaultValue);
+    }
+
 
 }
