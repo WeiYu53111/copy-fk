@@ -299,10 +299,9 @@ public class ClusterEntrypoint implements FatalErrorHandler{
         // 如果没有启用则 创建默认的空实现类，启用了则会根据是zk还是k8s方案创建对应service对象
         haServices = createHaServices(configuration, ioExecutor, rpcSystem);
 
-
-        //TODO 负责处理一些文件的上传工作,例如jar包、日志? 后续补充BlobServer的说明
+        // TODO 负责处理 大对象的存储工作,例如jar包、日志? 后续补充BlobServer的说明
         blobServer = new BlobServer(configuration, haServices.createBlobStore());
-
+        blobServer.start();
 
 
     }

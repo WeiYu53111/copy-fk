@@ -70,6 +70,19 @@ public class Configuration {
         return getOptional(configOption).orElseGet(configOption::defaultValue);
     }
 
+
+    /**
+     * Returns the value associated with the given config option as a string. If no value is mapped
+     * under any key of the option, it returns the specified default instead of the option's default
+     * value.
+     *
+     * @param configOption The configuration option
+     * @return the (default) value associated with the given config option
+     */
+    public String getString(ConfigOption<String> configOption, String overrideDefault) {
+        return getOptional(configOption).orElse(overrideDefault);
+    }
+
     private Optional<Object> getRawValueFromOption(ConfigOption<?> configOption) {
         return applyWithOption(configOption, this::getRawValue);
     }

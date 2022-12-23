@@ -3,6 +3,8 @@ package flink.flink_core.util;
 
 import javax.annotation.Nullable;
 
+import java.io.IOException;
+
 import static flink.flink_core.util.Preconditions.checkNotNull;
 
 /**
@@ -33,4 +35,24 @@ public class ExceptionUtils {
             return previous;
         }
     }
+
+
+    /**
+     * Tries to throw the given {@code Throwable} in scenarios where the signatures allows only
+     * IOExceptions (and RuntimeException and Error). Throws this exception directly, if it is an
+     * IOException, a RuntimeException, or an Error. Otherwise does nothing.
+     *
+     * @param t The Throwable to be thrown.
+     */
+    public static void tryRethrowIOException(Throwable t) throws IOException {
+        if (t instanceof IOException) {
+            throw (IOException) t;
+        } else if (t instanceof RuntimeException) {
+            throw (RuntimeException) t;
+        } else if (t instanceof Error) {
+            throw (Error) t;
+        }
+    }
+
+
 }

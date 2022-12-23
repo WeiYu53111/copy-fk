@@ -6,6 +6,8 @@ import flink.flink_core.configuration.BlobServerOptions;
 import flink.flink_core.configuration.Configuration;
 import flink.flink_core.configuration.JobManagerOptions;
 import flink.flink_core.configuration.SecurityOptions;
+import flink.flink_core.util.ExceptionUtils;
+import flink.flink_core.util.FileUtils;
 import flink.flink_core.util.NetUtils;
 import flink.flink_core.util.ShutdownHookUtil;
 import flink.flink_runtime.runtime.net.SSLUtils;
@@ -16,9 +18,13 @@ import javax.net.ServerSocketFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -64,14 +70,24 @@ public class BlobServer extends Thread implements BlobService {
     private final Timer cleanupTimer;
 
 
+    /** The server socket listening for incoming connections. */
+    private final ServerSocket serverSocket;
+
+
     private final ConcurrentHashMap<Tuple2<JobID, TransientBlobKey>, Long> blobExpiryTimes =
             new ConcurrentHashMap<>();
 
 
+    /** Set of currently running threads. */
+    private final Set<BlobServerConnection> activeConnections = new HashSet<>();
 
     /** Shutdown hook thread to ensure deletion of the local storage directory. */
     private final Thread shutdownHook;
 
+
+
+    /** Indicates whether a shutdown of server component has been requested. */
+    private final AtomicBoolean shutdownRequested = new AtomicBoolean();
 
     /**
      * Instantiates a new BLOB server and binds it to a free network port.
@@ -195,6 +211,103 @@ public class BlobServer extends Thread implements BlobService {
 
     @Override
     public void close() throws IOException {
+        cleanupTimer.cancel();
 
+        if (shutdownRequested.compareAndSet(false, true)) {
+            Exception exception = null;
+
+            try {
+                this.serverSocket.close();
+            } catch (IOException ioe) {
+                exception = ioe;
+            }
+
+            // wake the thread up, in case it is waiting on some operation
+            interrupt();
+
+            try {
+                join();
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+
+                LOG.debug("Error while waiting for this thread to die.", ie);
+            }
+
+            synchronized (activeConnections) {
+                if (!activeConnections.isEmpty()) {
+                    for (BlobServerConnection conn : activeConnections) {
+                        LOG.debug("Shutting down connection {}.", conn.getName());
+                        conn.close();
+                    }
+                    activeConnections.clear();
+                }
+            }
+
+            // Clean up the storage directory
+            try {
+                FileUtils.deleteDirectory(storageDir);
+            } catch (IOException e) {
+                exception = ExceptionUtils.firstOrSuppressed(e, exception);
+            }
+
+            // Remove shutdown hook to prevent resource leaks
+            ShutdownHookUtil.removeShutdownHook(shutdownHook, getClass().getSimpleName(), LOG);
+
+            if (LOG.isInfoEnabled()) {
+                LOG.info(
+                        "Stopped BLOB server at {}:{}",
+                        serverSocket.getInetAddress().getHostAddress(),
+                        getPort());
+            }
+
+            ExceptionUtils.tryRethrowIOException(exception);
+        }
     }
+
+
+    /** Returns the lock used to guard file accesses. */
+    ReadWriteLock getReadWriteLock() {
+        return readWriteLock;
+    }
+
+
+    @Override
+    public void run() {
+        try {
+            while (!this.shutdownRequested.get()) {
+                BlobServerConnection conn =
+                        new BlobServerConnection(NetUtils.acceptWithoutTimeout(serverSocket), this);
+                try {
+                    synchronized (activeConnections) {
+                        while (activeConnections.size() >= maxConnections) {
+                            activeConnections.wait(2000);
+                        }
+                        activeConnections.add(conn);
+                    }
+
+                    conn.start();
+                    conn = null;
+                } finally {
+                    if (conn != null) {
+                        conn.close();
+                        synchronized (activeConnections) {
+                            activeConnections.remove(conn);
+                        }
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            if (!this.shutdownRequested.get()) {
+                LOG.error("BLOB server stopped working. Shutting down", t);
+
+                try {
+                    close();
+                } catch (Throwable closeThrowable) {
+                    LOG.error("Could not properly close the BlobServer.", closeThrowable);
+                }
+            }
+        }
+    }
+
+
 }

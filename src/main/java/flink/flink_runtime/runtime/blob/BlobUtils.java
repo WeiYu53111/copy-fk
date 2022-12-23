@@ -4,9 +4,11 @@ import flink.flink_core.configuration.BlobServerOptions;
 import flink.flink_core.configuration.Configuration;
 import flink.flink_core.configuration.ConfigurationUtils;
 import flink.flink_core.util.StringUtils;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.Random;
 import java.util.UUID;
 
@@ -63,5 +65,16 @@ public class BlobUtils {
         throw new IOException(
                 "Could not create storage directory for BLOB store in '" + baseDir + "'.");
     }
+
+    static void closeSilently(Socket socket, Logger log) {
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (Throwable t) {
+                log.debug("Exception while closing BLOB server connection socket.", t);
+            }
+        }
+    }
+
 
 }

@@ -66,4 +66,30 @@ public class ShutdownHookUtil {
         return false;
     }
 
+
+
+    /** Removes a shutdown hook from the JVM. */
+    public static void removeShutdownHook(
+            final Thread shutdownHook, final String serviceName, final Logger logger) {
+
+        // Do not run if this is invoked by the shutdown hook itself
+        if (shutdownHook == null || shutdownHook == Thread.currentThread()) {
+            return;
+        }
+
+        checkNotNull(logger);
+
+        try {
+            Runtime.getRuntime().removeShutdownHook(shutdownHook);
+        } catch (IllegalStateException e) {
+            // race, JVM is in shutdown already, we can safely ignore this
+            logger.debug(
+                    "Unable to remove shutdown hook for {}, shutdown already in progress",
+                    serviceName,
+                    e);
+        } catch (Throwable t) {
+            logger.warn("Exception while un-registering {}'s shutdown hook.", serviceName, t);
+        }
+    }
+
 }

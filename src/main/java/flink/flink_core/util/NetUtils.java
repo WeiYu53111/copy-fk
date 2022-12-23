@@ -4,6 +4,8 @@ import flink.flink_core.configuration.IllegalConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.*;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -18,6 +20,10 @@ public class NetUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(NetUtils.class);
 
+
+    /** The wildcard address to listen on all interfaces (either 0.0.0.0 or ::). */
+    private static final String WILDCARD_ADDRESS =
+            new InetSocketAddress(0).getAddress().getHostAddress();
 
     /**
      * Returns an iterator over available ports defined by the range definition.
@@ -100,6 +106,87 @@ public class NetUtils {
      */
     public static boolean isValidHostPort(int port) {
         return 0 <= port && port <= 65535;
+    }
+
+
+
+    /**
+     * Returns the wildcard address to listen on all interfaces.
+     *
+     * @return Either 0.0.0.0 or :: depending on the IP setup.
+     */
+    public static String getWildcardIPAddress() {
+        return WILDCARD_ADDRESS;
+    }
+
+
+
+    /**
+     * Tries to allocate a socket from the given sets of ports.
+     *
+     * @param portsIterator A set of ports to choose from.
+     * @param factory A factory for creating the SocketServer
+     * @return null if no port was available or an allocated socket.
+     */
+    public static ServerSocket createSocketFromPorts(
+            Iterator<Integer> portsIterator, SocketFactory factory) {
+        while (portsIterator.hasNext()) {
+            int port = portsIterator.next();
+            LOG.debug("Trying to open socket on port {}", port);
+            try {
+                return factory.createSocket(port);
+            } catch (IOException | IllegalArgumentException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unable to allocate socket on port", e);
+                } else {
+                    LOG.info(
+                            "Unable to allocate on port {}, due to error: {}",
+                            port,
+                            e.getMessage());
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+    /** A factory for a local socket from port number. */
+    @FunctionalInterface
+    public interface SocketFactory {
+        ServerSocket createSocket(int port) throws IOException;
+    }
+
+
+
+    /**
+     * Calls {@link ServerSocket#accept()} on the provided server socket, suppressing any thrown
+     * {@link SocketTimeoutException}s. This is a workaround for the underlying JDK-8237858 bug in
+     * JDK 11 that can cause errant SocketTimeoutExceptions to be thrown at unexpected times.
+     *
+     * <p>This method expects the provided ServerSocket has no timeout set (SO_TIMEOUT of 0),
+     * indicating an infinite timeout. It will suppress all SocketTimeoutExceptions, even if a
+     * ServerSocket with a non-zero timeout is passed in.
+     *
+     * @param serverSocket a ServerSocket with {@link SocketOptions#SO_TIMEOUT SO_TIMEOUT} set to 0;
+     *     if SO_TIMEOUT is greater than 0, then this method will suppress SocketTimeoutException;
+     *     must not be null; SO_TIMEOUT option must be set to 0
+     * @return the new Socket
+     * @exception IOException see {@link ServerSocket#accept()}
+     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8237858">JDK-8237858</a>
+     */
+    public static Socket acceptWithoutTimeout(ServerSocket serverSocket) throws IOException {
+        Preconditions.checkArgument(
+                serverSocket.getSoTimeout() == 0, "serverSocket SO_TIMEOUT option must be 0");
+        while (true) {
+            try {
+                return serverSocket.accept();
+            } catch (SocketTimeoutException exception) {
+                // This should be impossible given that the socket timeout is set to zero
+                // which indicates an infinite timeout. This is due to the underlying JDK-8237858
+                // bug. We retry the accept call indefinitely to replicate the expected behavior.
+            }
+        }
     }
 
 }

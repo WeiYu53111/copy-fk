@@ -61,4 +61,12 @@ public abstract class Formatter {
                 .replaceAll(TEMPORARY_PLACEHOLDER, "%s");
     }
 
+
+    public void format(LinkElement element) {
+        formatLink(state, element.getLink(), element.getText());
+    }
+
+
+    protected abstract void formatLink(StringBuilder state, String link, String description);
+
 }
