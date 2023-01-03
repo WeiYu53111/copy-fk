@@ -300,6 +300,7 @@ public class ClusterEntrypoint implements FatalErrorHandler{
         haServices = createHaServices(configuration, ioExecutor, rpcSystem);
 
         // TODO 负责处理 大对象的存储工作,例如jar包、日志? 后续补充BlobServer的说明
+        // BlobServer中分两种对象存储,对应 两种类型的 BlobType
         blobServer = new BlobServer(configuration, haServices.createBlobStore());
         blobServer.start();
 

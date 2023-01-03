@@ -12,7 +12,7 @@ import java.io.IOException;
  * @Since 1.0
  * @Date 12/22/2022
  */
-public interface BlobStore {
+public interface BlobStore  extends BlobView{
 
     /**
      * Copies the local file to the blob store.

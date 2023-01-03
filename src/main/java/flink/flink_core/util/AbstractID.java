@@ -86,4 +86,32 @@ public class AbstractID implements Comparable<AbstractID>, java.io.Serializable{
     }
 
 
+    /**
+     * Gets the bytes underlying this ID.
+     *
+     * @return The bytes underlying this ID.
+     */
+    public byte[] getBytes() {
+        byte[] bytes = new byte[SIZE];
+        longToByteArray(lowerPart, bytes, 0);
+        longToByteArray(upperPart, bytes, SIZE_OF_LONG);
+        return bytes;
+    }
+
+
+    /**
+     * Converts a long to a byte array.
+     *
+     * @param l the long variable to be converted
+     * @param ba the byte array to store the result the of the conversion
+     * @param offset offset indicating at what position inside the byte array the result of the
+     *     conversion shall be stored
+     */
+    private static void longToByteArray(long l, byte[] ba, int offset) {
+        for (int i = 0; i < SIZE_OF_LONG; ++i) {
+            final int shift = i << 3; // i * 8
+            ba[offset + SIZE_OF_LONG - 1 - i] = (byte) ((l & (0xffL << shift)) >>> shift);
+        }
+    }
+
 }

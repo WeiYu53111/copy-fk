@@ -33,4 +33,30 @@ public class JobID  extends AbstractID {
     public JobID(long lowerPart, long upperPart) {
         super(lowerPart, upperPart);
     }
+
+
+    /**
+     * Creates a new JobID from the given byte sequence. The byte sequence must be exactly 16 bytes
+     * long. The first eight bytes make up the lower part of the ID, while the next 8 bytes make up
+     * the upper part of the ID.
+     *
+     * @param bytes The byte sequence.
+     */
+    public JobID(byte[] bytes) {
+        super(bytes);
+    }
+
+
+    /**
+     * Creates a new JobID from the given byte sequence. The byte sequence must be exactly 16 bytes
+     * long. The first eight bytes make up the lower part of the ID, while the next 8 bytes make up
+     * the upper part of the ID.
+     *
+     * @param bytes The byte sequence.
+     * @return A new JobID corresponding to the ID encoded in the bytes.
+     */
+    public static JobID fromByteArray(byte[] bytes) {
+        return new JobID(bytes);
+    }
+
 }

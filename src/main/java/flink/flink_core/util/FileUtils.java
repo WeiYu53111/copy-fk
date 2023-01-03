@@ -134,7 +134,8 @@ public final class FileUtils {
             return;
         }
         if (OperatingSystem.isMac()) {
-            guardIfMac(toRun, file);
+            //TODO 省略MAC系统的实现
+            //guardIfMac(toRun, file);
             return;
         }
 

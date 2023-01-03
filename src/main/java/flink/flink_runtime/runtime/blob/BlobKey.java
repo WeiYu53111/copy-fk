@@ -2,9 +2,11 @@ package flink.flink_runtime.runtime.blob;
 
 import flink.flink_core.util.AbstractID;
 
-import java.io.Serializable;
+import java.io.*;
 
 import static flink.flink_core.util.Preconditions.checkNotNull;
+import static flink.flink_runtime.runtime.blob.BlobKey.BlobType.PERMANENT_BLOB;
+import static flink.flink_runtime.runtime.blob.BlobKey.BlobType.TRANSIENT_BLOB;
 
 /**
  * @Description
@@ -121,4 +123,104 @@ public abstract class BlobKey implements Serializable, Comparable<BlobKey>{
             return aarr.length - barr.length;
         }
     }
+
+
+
+    /**
+     * Returns the right {@link BlobKey} subclass for the given parameters.
+     *
+     * @param type whether the referenced BLOB is permanent or transient
+     * @param key the actual key data
+     * @return BlobKey subclass
+     */
+    static BlobKey createKey(BlobType type, byte[] key) {
+        if (type == PERMANENT_BLOB) {
+            return new PermanentBlobKey(key);
+        } else {
+            return new TransientBlobKey(key);
+        }
+    }
+
+
+    /**
+     * Auxiliary method to write this BLOB key to an output stream.
+     *
+     * @param outputStream the output stream to write the BLOB key to
+     * @throws IOException thrown if an I/O error occurs while writing the BLOB key
+     */
+    void writeToOutputStream(final OutputStream outputStream) throws IOException {
+        outputStream.write(this.key);
+        outputStream.write(this.type.ordinal());
+        outputStream.write(this.random.getBytes());
+    }
+
+
+    /**
+     * Auxiliary method to read a BLOB key from an input stream.
+     *
+     * @param inputStream the input stream to read the BLOB key from
+     * @return the read BLOB key
+     * @throws IOException throw if an I/O error occurs while reading from the input stream
+     */
+    static BlobKey readFromInputStream(InputStream inputStream) throws IOException {
+
+        final byte[] key = new byte[BlobKey.SIZE];
+        final byte[] random = new byte[AbstractID.SIZE];
+
+        int bytesRead = 0;
+        // read key
+        while (bytesRead < key.length) {
+            final int read = inputStream.read(key, bytesRead, key.length - bytesRead);
+            if (read < 0) {
+                throw new EOFException("Read an incomplete BLOB key");
+            }
+            bytesRead += read;
+        }
+
+        // read BLOB type
+        final BlobType blobType;
+        {
+            final int read = inputStream.read();
+            if (read < 0) {
+                throw new EOFException("Read an incomplete BLOB type");
+            } else if (read == TRANSIENT_BLOB.ordinal()) {
+                blobType = TRANSIENT_BLOB;
+            } else if (read == PERMANENT_BLOB.ordinal()) {
+                blobType = PERMANENT_BLOB;
+            } else {
+                throw new IOException("Invalid data received for the BLOB type: " + read);
+            }
+        }
+
+        // read random component
+        bytesRead = 0;
+        while (bytesRead < AbstractID.SIZE) {
+            final int read = inputStream.read(random, bytesRead, AbstractID.SIZE - bytesRead);
+            if (read < 0) {
+                throw new EOFException("Read an incomplete BLOB key");
+            }
+            bytesRead += read;
+        }
+
+        return createKey(blobType, key, random);
+    }
+
+
+
+    /**
+     * Returns the right {@link BlobKey} subclass for the given parameters.
+     *
+     * @param type whether the referenced BLOB is permanent or transient
+     * @param key the actual key data
+     * @param random the random component of the key
+     * @return BlobKey subclass
+     */
+    static BlobKey createKey(BlobType type, byte[] key, byte[] random) {
+        if (type == PERMANENT_BLOB) {
+            return new PermanentBlobKey(key, random);
+        } else {
+            return new TransientBlobKey(key, random);
+        }
+    }
+
 }
