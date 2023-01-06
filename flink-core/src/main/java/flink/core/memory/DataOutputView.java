@@ -1,4 +1,4 @@
-package flink.core.io;
+package flink.core.memory;
 
 import java.io.DataOutput;
 

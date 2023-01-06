@@ -4,6 +4,7 @@ package flink.runtime.blob;
 import flink.api.common.JobID;
 import flink.configuration.BlobServerOptions;
 import flink.configuration.Configuration;
+import flink.core.fs.Path;
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,9 +21,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static flink.runtime.blob.BlobClientTest.validateGetAndClose;
 import static flink.runtime.blob.BlobKey.BlobType.PERMANENT_BLOB;
 import static flink.runtime.blob.BlobKey.BlobType.TRANSIENT_BLOB;
 import static flink.runtime.blob.BlobKeyTest.verifyKeyDifferentHashEquals;
+import static flink.runtime.blob.BlobServerGetTest.get;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

@@ -1,13 +1,14 @@
 package flink.runtime.entrypoint;
 
-import flink.flink_core.configuration.Configuration;
-import flink.flink_core.configuration.IllegalConfigurationException;
-import flink.flink_core.configuration.JobManagerOptions;
-import flink.flink_core.util.concurrent.ExecutorThreadFactory;
-import flink.flink_rpc.flink_rpc_core.rpc.*;
+
+import flink.configuration.Configuration;
+import flink.configuration.IllegalConfigurationException;
+import flink.configuration.JobManagerOptions;
 import flink.runtime.blob.BlobServer;
 import flink.runtime.highavailability.HighAvailabilityServices;
 import flink.runtime.highavailability.HighAvailabilityServicesUtils;
+import flink.runtime.rpc.*;
+import flink.util.concurrent.ExecutorThreadFactory;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ import java.util.concurrent.Executors;
 
 
 
-public class ClusterEntrypoint implements FatalErrorHandler{
+public class ClusterEntrypoint implements FatalErrorHandler {
 
     private Configuration configuration;
 

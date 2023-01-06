@@ -23,6 +23,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>wy</groupId>
+            <artifactId>flink-rpc-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>commons-io</groupId>

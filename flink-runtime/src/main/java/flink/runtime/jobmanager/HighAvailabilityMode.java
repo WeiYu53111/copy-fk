@@ -9,9 +9,9 @@ package flink.runtime.jobmanager;
  */
 
 
-import flink.flink_core.configuration.ConfigConstants;
-import flink.flink_core.configuration.Configuration;
-import flink.flink_core.configuration.HighAvailabilityOptions;
+import flink.configuration.ConfigConstants;
+import flink.configuration.Configuration;
+import flink.configuration.HighAvailabilityOptions;
 
 /**
  * High availability mode for Flink's cluster execution. Currently supported modes are:

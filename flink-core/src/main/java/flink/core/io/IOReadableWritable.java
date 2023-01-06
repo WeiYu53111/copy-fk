@@ -9,6 +9,9 @@ package flink.core.io;
  */
 
 
+import flink.core.memory.DataInputView;
+import flink.core.memory.DataOutputView;
+
 import java.io.IOException;
 
 /**

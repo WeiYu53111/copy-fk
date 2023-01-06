@@ -1,25 +1,27 @@
 package flink.runtime.highavailability;
 
+import flink.configuration.Configuration;
+import flink.configuration.JobManagerOptions;
+import flink.configuration.RestOptions;
+import flink.configuration.SecurityOptions;
 import flink.flink_core.api.java.tuple.Tuple2;
-import flink.flink_core.configuration.Configuration;
-import flink.flink_core.configuration.JobManagerOptions;
-import flink.flink_core.configuration.RestOptions;
-import flink.flink_core.configuration.SecurityOptions;
-import flink.flink_rpc.flink_rpc_core.rpc.AddressResolution;
-import flink.flink_rpc.flink_rpc_core.rpc.FatalErrorHandler;
-import flink.flink_rpc.flink_rpc_core.rpc.RpcServiceUtils;
-import flink.flink_rpc.flink_rpc_core.rpc.RpcSystemUtils;
+
 import flink.runtime.dispatcher.Dispatcher;
 import flink.runtime.highavailability.nonha.StandaloneHaServices;
 import flink.runtime.jobmanager.HighAvailabilityMode;
 import flink.runtime.resourcemanager.ResourceManager;
+import flink.runtime.rpc.AddressResolution;
+import flink.runtime.rpc.FatalErrorHandler;
+import flink.runtime.rpc.RpcServiceUtils;
+import flink.runtime.rpc.RpcSystemUtils;
 
 import javax.naming.ConfigurationException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.Executor;
 
-import static flink.flink_core.util.Preconditions.checkNotNull;
+import static flink.util.Preconditions.checkNotNull;
+
 
 /**
  * @Description

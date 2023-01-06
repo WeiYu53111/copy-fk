@@ -89,4 +89,19 @@ public class BlobServerOptions {
                     .withDescription(
                             "Flag to override ssl support for the blob service transport.");
 
+
+    /** The socket timeout in milliseconds for the blob client. */
+    public static final ConfigOption<Integer> SO_TIMEOUT =
+            key("blob.client.socket.timeout")
+                    .defaultValue(300_000)
+                    .withDescription("The socket timeout in milliseconds for the blob client.");
+
+
+
+    /** The connection timeout in milliseconds for the blob client. */
+    public static final ConfigOption<Integer> CONNECT_TIMEOUT =
+            key("blob.client.connect.timeout")
+                    .defaultValue(0)
+                    .withDescription("The connection timeout in milliseconds for the blob client.");
+
 }

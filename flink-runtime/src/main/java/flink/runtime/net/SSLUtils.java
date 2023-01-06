@@ -11,6 +11,7 @@ import org.apache.flink.shaded.netty4.io.netty.handler.ssl.util.FingerprintTrust
 
 import javax.annotation.Nullable;
 import javax.net.ServerSocketFactory;
+import javax.net.SocketFactory;
 import javax.net.ssl.*;
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +41,19 @@ import static org.apache.flink.shaded.netty4.io.netty.handler.ssl.SslProvider.*;
 public class SSLUtils {
 
 
+    /**
+     * Creates a factory for SSL Client Sockets from the given configuration. SSL Client Sockets are
+     * always part of internal communication.
+     */
+    public static SocketFactory createSSLClientSocketFactory(Configuration config)
+            throws Exception {
+        SSLContext sslContext = createInternalSSLContext(config, true);
+        if (sslContext == null) {
+            throw new IllegalConfigurationException("SSL is not enabled");
+        }
+
+        return sslContext.getSocketFactory();
+    }
 
     /**
      * Creates a factory for SSL Server Sockets from the given configuration. SSL Server Sockets are

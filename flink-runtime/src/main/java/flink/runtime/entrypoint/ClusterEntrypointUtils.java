@@ -1,11 +1,13 @@
 package flink.runtime.entrypoint;
 
-import flink.flink_core.configuration.ClusterOptions;
-import flink.flink_core.configuration.Configuration;
+
+import flink.configuration.ClusterOptions;
+import flink.configuration.Configuration;
+import flink.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import flink.runtime.util.Hardware;
-import flink.flink_core.util.Preconditions;
+
 
 /**
  * @Description
