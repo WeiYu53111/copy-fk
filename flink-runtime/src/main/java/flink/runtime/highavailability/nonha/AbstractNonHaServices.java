@@ -6,7 +6,8 @@ import flink.runtime.highavailability.HighAvailabilityServices;
 
 import java.io.IOException;
 
-import static flink.flink_core.util.Preconditions.checkState;
+import static flink.util.Preconditions.checkState;
+
 
 /**
  * @Description

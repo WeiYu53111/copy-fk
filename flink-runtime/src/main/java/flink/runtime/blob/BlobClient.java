@@ -4,6 +4,7 @@ import flink.api.common.JobID;
 import flink.configuration.BlobServerOptions;
 import flink.configuration.Configuration;
 import flink.configuration.SecurityOptions;
+import flink.core.fs.FileSystem;
 import flink.core.fs.Path;
 import flink.runtime.net.SSLUtils;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static flink.runtime.blob.BlobKey.BlobType.PERMANENT_BLOB;
 import static flink.util.Preconditions.checkNotNull;
 
 /**

@@ -111,6 +111,15 @@
                     separatly in the flink-shaded-hadoop-2 dependency).
                 -->
         <dependencies>
+
+
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-shaded-guava</artifactId>
+                <version>30.1.1-jre-${flink.shaded.version}</version>
+            </dependency>
+
+
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>

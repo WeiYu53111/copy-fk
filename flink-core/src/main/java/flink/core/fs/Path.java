@@ -275,4 +275,26 @@ public class Path implements IOReadableWritable, Serializable {
     }
 
 
+
+    /**
+     * Returns the FileSystem that owns this Path.
+     *
+     * @return the FileSystem that owns this Path
+     * @throws IOException thrown if the file system could not be retrieved
+     */
+    public FileSystem getFileSystem() throws IOException {
+        return FileSystem.get(this.toUri());
+    }
+
+
+
+    /**
+     * Converts the path object to a {@link URI}.
+     *
+     * @return the {@link URI} object converted from the path object
+     */
+    public URI toUri() {
+        return uri;
+    }
+
 }

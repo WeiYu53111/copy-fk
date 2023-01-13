@@ -1,6 +1,7 @@
 package flink.runtime.highavailability.nonha;
 
-import static flink.flink_core.util.Preconditions.checkNotNull;
+
+import static flink.util.Preconditions.checkNotNull;
 
 /**
  * @Description

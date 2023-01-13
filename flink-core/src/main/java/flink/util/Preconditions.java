@@ -105,6 +105,20 @@ public final class Preconditions {
 
     /**
      * Checks the given boolean condition, and throws an {@code IllegalStateException} if the
+     * condition is not met (evaluates to {@code false}).
+     *
+     * @param condition The condition to check
+     * @throws IllegalStateException Thrown, if the condition is violated.
+     */
+    public static void checkState(boolean condition) {
+        if (!condition) {
+            throw new IllegalStateException();
+        }
+    }
+
+
+    /**
+     * Checks the given boolean condition, and throws an {@code IllegalStateException} if the
      * condition is not met (evaluates to {@code false}). The exception will have the given error
      * message.
      *
@@ -116,6 +130,30 @@ public final class Preconditions {
     public static void checkState(boolean condition, @Nullable Object errorMessage) {
         if (!condition) {
             throw new IllegalStateException(String.valueOf(errorMessage));
+        }
+    }
+
+
+
+    /**
+     * Checks the given boolean condition, and throws an {@code IllegalStateException} if the
+     * condition is not met (evaluates to {@code false}).
+     *
+     * @param condition The condition to check
+     * @param errorMessageTemplate The message template for the {@code IllegalStateException} that
+     *     is thrown if the check fails. The template substitutes its {@code %s} placeholders with
+     *     the error message arguments.
+     * @param errorMessageArgs The arguments for the error message, to be inserted into the message
+     *     template for the {@code %s} placeholders.
+     * @throws IllegalStateException Thrown, if the condition is violated.
+     */
+    public static void checkState(
+            boolean condition,
+            @Nullable String errorMessageTemplate,
+            @Nullable Object... errorMessageArgs) {
+
+        if (!condition) {
+            throw new IllegalStateException(format(errorMessageTemplate, errorMessageArgs));
         }
     }
 }
